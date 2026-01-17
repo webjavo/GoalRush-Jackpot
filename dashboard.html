@@ -648,34 +648,43 @@ window.addEventListener('load', () => {
     console.error('Init error', err);
   }
   
-  (function connectGlobalCountdown(){
+  (function(){
 
   function getCountdown(){
     return JSON.parse(localStorage.getItem('globalCountdown') || '{}');
   }
 
-  function updateBettingState(){
+  function bettingOpen(){
     const data = getCountdown();
-    const betButtons = document.querySelectorAll('.bet-option');
+    if(!data.running || !data.endTime) return false;
+    return (data.endTime - Date.now()) > 0;
+  }
 
-    // default: disabled
-    let active = false;
+  function updateBetButtons(){
+    const bets = document.querySelectorAll('.bet-choice');
+    const open = bettingOpen();
 
-    if(data.running && data.endTime){
-      const remaining = Math.floor((data.endTime - Date.now()) / 1000);
-      active = remaining > 0;
-    }
-
-    betButtons.forEach(btn=>{
-      if(active){
-        btn.classList.remove('disabled');
+    bets.forEach(btn=>{
+      if(open){
+        btn.disabled = false;
         btn.style.pointerEvents = 'auto';
         btn.style.opacity = '1';
       }else{
-        btn.classList.add('disabled');
+        btn.disabled = true;
         btn.style.pointerEvents = 'none';
         btn.style.opacity = '0.4';
       }
+    });
+
+    const status = document.getElementById('bettingStatus');
+    if(status){
+      status.textContent = open ? 'Betting Open' : 'Betting Closed';
+      status.style.color = open ? 'lime' : 'red';
+    }
+  }
+
+  updateBetButtons();
+  setInterval(updateBetButtons, 1000);
     });
 
     // Optional text indicator
@@ -692,7 +701,7 @@ window.addEventListener('load', () => {
   // keep checking every second
   setInterval(updateBettingState, 1000);
 
-});
+})();
 </script>
 </body>
 </html>
