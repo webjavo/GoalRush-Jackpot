@@ -648,60 +648,7 @@ window.addEventListener('load', () => {
     console.error('Init error', err);
   }
   
-  (function(){
-
-  function getCountdown(){
-    return JSON.parse(localStorage.getItem('globalCountdown') || '{}');
-  }
-
-  function bettingOpen(){
-    const data = getCountdown();
-    if(!data.running || !data.endTime) return false;
-    return (data.endTime - Date.now()) > 0;
-  }
-
-  function updateBetButtons(){
-    const bets = document.querySelectorAll('.bet-choice');
-    const open = bettingOpen();
-
-    bets.forEach(btn=>{
-      if(open){
-        btn.disabled = false;
-        btn.style.pointerEvents = 'auto';
-        btn.style.opacity = '1';
-      }else{
-        btn.disabled = true;
-        btn.style.pointerEvents = 'none';
-        btn.style.opacity = '0.4';
-      }
-    });
-
-    const status = document.getElementById('bettingStatus');
-    if(status){
-      status.textContent = open ? 'Betting Open' : 'Betting Closed';
-      status.style.color = open ? 'lime' : 'red';
-    }
-  }
-
-  updateBetButtons();
-  setInterval(updateBetButtons, 1000);
-    });
-
-    // Optional text indicator
-    const el = document.getElementById('bettingStatus');
-    if(el){
-      el.textContent = active ? 'Betting Open' : 'Betting Closed';
-      el.style.color = active ? 'lime' : 'red';
-    }
-  }
-
-  // run immediately
-  updateBettingState();
-
-  // keep checking every second
-  setInterval(updateBettingState, 1000);
-
-})();
+});
 </script>
 </body>
 </html>
